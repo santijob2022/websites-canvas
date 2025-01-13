@@ -6,6 +6,7 @@ let redoHistory = [];
 let textAreaVisible = false;
 let savedText = "";
 let textArea;
+let resizingTextArea = false;
 
 function createCanvas() {
     if (canvas) return;
@@ -41,7 +42,7 @@ function createTextAreaButton() {
     copyButton.innerText = 'Copy Text';
     copyButton.style.position = 'fixed';
     copyButton.style.top = '10px';
-    copyButton.style.left = '145px';
+    copyButton.style.left = '140px';
     copyButton.style.zIndex = '10001';
     copyButton.style.padding = '10px';
     copyButton.style.width = '120px';
@@ -80,6 +81,8 @@ function createTextArea() {
     textArea.style.resize = 'both';
     textArea.style.overflow = 'auto';
     textArea.style.fontSize = '15px';
+    textArea.addEventListener('mousedown', () => resizingTextArea = true);
+    textArea.addEventListener('mouseup', () => resizingTextArea = false);
     document.body.appendChild(textArea);
     textAreaVisible = true;
 }
@@ -88,7 +91,7 @@ createCanvas();
 createTextAreaButton();
 
 document.addEventListener('pointerdown', (e) => {
-    if (!drawingEnabled) return;
+    if (!drawingEnabled || resizingTextArea) return;
     drawing = true;
     ctx.beginPath();
     ctx.moveTo(e.clientX, e.clientY);
@@ -97,7 +100,7 @@ document.addEventListener('pointerdown', (e) => {
 });
 
 document.addEventListener('pointermove', (e) => {
-    if (!drawingEnabled || !drawing) return;
+    if (!drawingEnabled || !drawing || resizingTextArea) return;
     ctx.lineTo(e.clientX, e.clientY);
     ctx.stroke();
 });
