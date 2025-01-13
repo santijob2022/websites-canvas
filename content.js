@@ -31,10 +31,30 @@ function createTextAreaButton() {
     button.style.left = '10px';
     button.style.zIndex = '10001';
     button.style.padding = '10px';
+    button.style.width = '120px';
     button.style.background = 'white';
     button.style.border = '1px solid black';
     button.onclick = toggleTextArea;
     document.body.appendChild(button);
+
+    const copyButton = document.createElement('button');
+    copyButton.innerText = 'Copy Text';
+    copyButton.style.position = 'fixed';
+    copyButton.style.top = '10px';
+    copyButton.style.left = '145px';
+    copyButton.style.zIndex = '10001';
+    copyButton.style.padding = '10px';
+    copyButton.style.width = '120px';
+    copyButton.style.background = 'white';
+    copyButton.style.border = '1px solid black';
+    copyButton.onclick = copyTextAreaContent;
+    document.body.appendChild(copyButton);
+}
+
+function copyTextAreaContent() {
+    if (textAreaVisible && textArea) {
+        navigator.clipboard.writeText(textArea.value);
+    }
 }
 
 function toggleTextArea() {
