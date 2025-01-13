@@ -8,6 +8,7 @@ let savedText = "";
 let textArea;
 let resizingTextArea = false;
 let copyButton;
+let textAreaActive = false;
 
 function createCanvas() {
     if (canvas) return;
@@ -23,6 +24,8 @@ function createCanvas() {
     ctx = canvas.getContext('2d');
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 }
 
 function createTextAreaButton() {
@@ -66,10 +69,12 @@ function toggleTextArea() {
         textArea.remove();
         textAreaVisible = false;
         copyButton.style.display = 'none';
+        textAreaActive = false;
     } else {
         createTextArea();
         textArea.focus();
         copyButton.style.display = 'block';
+        textAreaActive = true;
     }
 }
 
@@ -86,11 +91,16 @@ function createTextArea() {
     textArea.style.resize = 'both';
     textArea.style.overflow = 'auto';
     textArea.style.fontSize = '15px';
-    textArea.addEventListener('mousedown', () => resizingTextArea = true);
+    textArea.addEventListener('mousedown', () => {
+        resizingTextArea = true;
+        textAreaActive = true;
+    });
     textArea.addEventListener('mouseup', () => resizingTextArea = false);
+    textArea.addEventListener('focusout', () => textAreaActive = false);
     document.body.appendChild(textArea);
     textAreaVisible = true;
     textArea.focus();
+    textAreaActive = true;
 }
 
 createCanvas();
@@ -98,6 +108,9 @@ createTextAreaButton();
 
 document.addEventListener('pointerdown', (e) => {
     if (!drawingEnabled || resizingTextArea) return;
+    if (textArea && e.target !== textArea) {
+        textAreaActive = false;
+    }
     drawing = true;
     ctx.beginPath();
     ctx.moveTo(e.clientX, e.clientY);
@@ -116,7 +129,10 @@ document.addEventListener('pointerup', () => {
 });
 
 document.addEventListener('keydown', (e) => {
-    if (!drawingEnabled || (textAreaVisible && document.activeElement === textArea)) return;
+    if (textAreaActive) {
+        return; // Let the text area handle undo/redo
+    }
+    if (!drawingEnabled) return;
     if (e.ctrlKey && e.key === 'z') {
         if (drawingHistory.length > 0) {
             redoHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
