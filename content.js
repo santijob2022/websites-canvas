@@ -65,6 +65,7 @@ function toggleTextArea() {
         textAreaVisible = false;
     } else {
         createTextArea();
+        textArea.focus();
     }
 }
 
@@ -85,6 +86,7 @@ function createTextArea() {
     textArea.addEventListener('mouseup', () => resizingTextArea = false);
     document.body.appendChild(textArea);
     textAreaVisible = true;
+    textArea.focus();
 }
 
 createCanvas();
