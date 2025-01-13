@@ -7,6 +7,7 @@ let textAreaVisible = false;
 let savedText = "";
 let textArea;
 let resizingTextArea = false;
+let copyButton;
 
 function createCanvas() {
     if (canvas) return;
@@ -38,17 +39,18 @@ function createTextAreaButton() {
     button.onclick = toggleTextArea;
     document.body.appendChild(button);
 
-    const copyButton = document.createElement('button');
+    copyButton = document.createElement('button');
     copyButton.innerText = 'Copy Text';
     copyButton.style.position = 'fixed';
     copyButton.style.top = '10px';
-    copyButton.style.left = '140px';
+    copyButton.style.left = '145px';
     copyButton.style.zIndex = '10001';
     copyButton.style.padding = '10px';
     copyButton.style.width = '120px';
     copyButton.style.background = 'white';
     copyButton.style.border = '1px solid black';
     copyButton.onclick = copyTextAreaContent;
+    copyButton.style.display = 'none';
     document.body.appendChild(copyButton);
 }
 
@@ -63,9 +65,11 @@ function toggleTextArea() {
         savedText = textArea.value;
         textArea.remove();
         textAreaVisible = false;
+        copyButton.style.display = 'none';
     } else {
         createTextArea();
         textArea.focus();
+        copyButton.style.display = 'block';
     }
 }
 
